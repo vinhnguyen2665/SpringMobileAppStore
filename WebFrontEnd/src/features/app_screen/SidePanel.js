@@ -49,7 +49,7 @@ export default function SidePanel() {
                                             userLogout={logout}/>
                     </li>
                     <li>
-                        <Link to="/home">Back to start page</Link>
+                        <Link to="/">Back to start page</Link>
                     </li>
                 </ul>
                 <div className="memo">

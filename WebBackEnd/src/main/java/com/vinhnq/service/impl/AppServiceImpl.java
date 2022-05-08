@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppServiceImpl implements AppService {
@@ -28,9 +29,9 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public AppInfoBean getLatestAppInfo(String packageName, boolean encrypt) {
+    public AppInfoBean getLatestAppInfo(String packageName, String type, boolean encrypt) {
         try {
-            AppInfo appInfo = this.appInfoDAO.getLatestAppInfo(packageName, CommonConst.DELETE_FLG.NON_DELETE);
+            AppInfo appInfo = this.appInfoDAO.getLatestAppInfo(packageName, type,CommonConst.DELETE_FLG.NON_DELETE);
             return EntityUtils.convertAppInfoToAppInfoBean(appInfo, encrypt);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -39,9 +40,25 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public AppInfoBean getAppInfo(String packageName, String versionCode, boolean encrypt) {
+    public Optional<AppInfoBean> getAppInfo(Long id, boolean encrypt) {
         try {
-            AppInfo appInfo = this.appInfoDAO.getLatestAppInfo(packageName, CommonConst.DELETE_FLG.NON_DELETE);
+            Optional<AppInfo> appInfo = this.appInfoRepository.findById(id);
+            if(appInfo.isPresent()){
+                return Optional.of(EntityUtils.convertAppInfoToAppInfoBean(appInfo.get(), encrypt)) ;
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public AppInfoBean getAppInfo(String packageName, String type, String versionCode, boolean encrypt) {
+        try {
+            AppInfo appInfo = this.appInfoDAO.getLatestAppInfo(packageName, type,CommonConst.DELETE_FLG.NON_DELETE);
             return EntityUtils.convertAppInfoToAppInfoBean(appInfo, encrypt);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -50,9 +67,31 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public List<AppInfoBean> getListAppInfo(String deleteFlg, boolean encrypt) {
+    public List<AppInfoBean> getAllListAppInfo(String deleteFlg, boolean encrypt) {
         try {
-            List<AppInfo> appInfos = this.appInfoRepository.getAppInfoByDeleteFlg(deleteFlg);
+            List<AppInfo> appInfos = this.appInfoRepository.getAppInfoByDeleteFlgOrderByIdDesc(deleteFlg);
+            return EntityUtils.convertAppInfoToAppInfoBean(appInfos, encrypt);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<AppInfoBean> getListAppInfoForHome(boolean encrypt) {
+        try {
+            List<AppInfo> appInfos = this.appInfoDAO.getListAppInfoForHome();
+            return EntityUtils.convertAppInfoToAppInfoBean(appInfos, encrypt);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<AppInfoBean> getListAppCondition(AppInfoBean appInfoBean, boolean encrypt) {
+        try {
+            List<AppInfo> appInfos = this.appInfoDAO.getListApp(appInfoBean);
             return EntityUtils.convertAppInfoToAppInfoBean(appInfos, encrypt);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

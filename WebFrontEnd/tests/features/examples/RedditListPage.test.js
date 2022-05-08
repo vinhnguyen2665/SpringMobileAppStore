@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { RedditListPage } from '../../../src/features/examples/RedditListPage';
+import { RedditListPage } from '../../../src/features/app_screen/RedditListPage';
 
 describe('examples/RedditListPage', () => {
   it('renders node with correct class name', () => {

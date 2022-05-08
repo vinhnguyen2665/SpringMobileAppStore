@@ -1,6 +1,9 @@
-import { WelcomePage } from './';
+import { AppListHome, AppDetailHome } from './';
 
 export default {
-  path: 'home',
-  childRoutes: [{ path: 'welcome-page', component: WelcomePage, isIndex: true, requiredAuthenticated: false }],
+  path: '',
+  childRoutes: [
+      { path: 'welcome-page', component: AppListHome, isIndex: true, requiredAuthenticated: false },
+    { path: 'app/:appType/:packageName/:versionName', component: AppDetailHome, requiredAuthenticated: false},
+  ],
 };

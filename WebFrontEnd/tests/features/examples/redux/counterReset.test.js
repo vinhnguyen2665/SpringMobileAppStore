@@ -1,11 +1,11 @@
 import {
   EXAMPLES_COUNTER_RESET,
-} from '../../../../src/features/examples/redux/constants';
+} from '../../../../src/features/app_screen/redux/constants';
 
 import {
   counterReset,
   reducer,
-} from '../../../../src/features/examples/redux/counterReset';
+} from '../../../../src/features/app_screen/redux/counterReset';
 
 describe('examples/redux/counterReset', () => {
   it('returns correct action by counterReset', () => {

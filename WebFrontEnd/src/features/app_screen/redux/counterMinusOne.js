@@ -10,7 +10,7 @@ export function counterMinusOne() {
 
 export function useCounterMinusOne() {
   const dispatch = useDispatch();
-  const count = useSelector(state => state.examples.count);
+  const count = useSelector(state => state.app_screen.count);
   const boundAction = useCallback(() => dispatch(counterMinusOne()), [dispatch]);
 
   return { count, counterMinusOne: boundAction };

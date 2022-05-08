@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @EnableJpaRepositories
 public interface AppInfoRepository  extends JpaRepository<AppInfo, Long> {
     AppInfo save(AppInfo appInfo);
     AppInfo saveAndFlush(AppInfo appInfo);
-    List<AppInfo> getAppInfoByDeleteFlg(String deleteFlg);
+    Optional<AppInfo> findById(Long id);
+    List<AppInfo> getAppInfoByDeleteFlgOrderByIdDesc(String deleteFlg);
 }

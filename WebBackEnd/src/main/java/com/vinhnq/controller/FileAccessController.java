@@ -1,8 +1,11 @@
-package com.vinhnq.controller.api;
+package com.vinhnq.controller;
 
 import com.vinhnq.beans.AppInfoBean;
+import com.vinhnq.beans.FileSize;
 import com.vinhnq.beans.ResponseAPI;
 import com.vinhnq.common.CommonConst;
+import com.vinhnq.common.FileUtils;
+import com.vinhnq.common.NetUtils;
 import com.vinhnq.common.URLConst;
 import com.vinhnq.service.ReadFileInformationService;
 import io.swagger.annotations.ApiOperation;
@@ -54,7 +57,8 @@ public class FileAccessController {
                 String fileName = file.getOriginalFilename();
                 File f = new File(Paths.get(CommonConst.COMMON_FILE.HOME_TMP, fileName).toString());
                 saveFile(file, f);
-                AppInfoBean information = readFileInformationService.read(f).encrypt();
+                FileSize size = FileUtils.convertFileSize(file.getSize());
+                AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getURL(request)).encrypt();
                 list.add(information);
             }
             if(null != files){
@@ -62,6 +66,9 @@ public class FileAccessController {
                     String fileName = multipartFile.getOriginalFilename();
                     File f = new File(Paths.get(CommonConst.COMMON_FILE.HOME_TMP, fileName).toString());
                     saveFile(multipartFile, f);
+                    FileSize size = FileUtils.convertFileSize(file.getSize());
+                    AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getURL(request)).encrypt();
+                    list.add(information);
                 }
             }
             return new ResponseAPI(HttpStatus.OK.value(), list);

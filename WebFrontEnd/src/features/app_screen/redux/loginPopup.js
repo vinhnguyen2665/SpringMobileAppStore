@@ -10,7 +10,7 @@ export function showLoginPopup() {
 
 export function useShowLoginPopup() {
   const dispatch = useDispatch();
-  const isShowLogin = useSelector(state => state.examples.isShowLogin);
+  const isShowLogin = useSelector(state => state.app_screen.isShowLogin);
   const action = useCallback(() => dispatch(showLoginPopup()), [dispatch]);
 
   return { isShowLogin, showLoginPopup: action };

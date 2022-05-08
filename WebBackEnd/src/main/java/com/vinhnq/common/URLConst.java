@@ -5,6 +5,7 @@ import java.io.File;
 public class URLConst {
 
     private static final String api = "/api";
+    private static final String COMMON = "/common";
     public static final String LOGIN_FAIL = "/login?error=true";
 
     public static final String lang_support_regex = "/en/|/ja/|/vi/";
@@ -68,9 +69,9 @@ public class URLConst {
 
     public static class APP_INFO {
         public static final String ROOT = "/app";
-
         public static class CONTROLLER {
             public static final String ROOT = lang + APP_INFO.ROOT;
+
         }
 
         public static class API {
@@ -81,10 +82,14 @@ public class URLConst {
              * <p>One way to solve this inconvenience is to modify our @PathVariable definition by adding a regex mapping.</p>
              * <p>Thereby any dot, including the last one, will be considered as part of our parameter</p>
              */
-            public static final String GET_APP_INFO_LATEST = ROOT + "/{packageName:.+}";
-            public static final String GET_APP_INFO = ROOT + "/{packageName:.+}/{versionCode:.+}";
-            public static final String CHECK_APP_VERSION = ROOT + "/check/{packageName:.+}/{versionCode:.+}";
+            public static final String GET_APP_INFO_LATEST = ROOT + "/{packageName:.+}/{type}";
+            public static final String GET_APP_INFO = ROOT + "/{packageName:.+}/{type}/{versionCode:.+}";
+            public static final String CHECK_APP_VERSION = ROOT + "/check/{packageName:.+}/{type}/{versionCode:.+}";
             public static final String GET_LIST = ROOT + "/list";
+            public static final String GET_LIST_FOR_HOME = ROOT + "/list-for-home";
+            public static final String GET_ICON = ROOT + "/get-icon";
+            public static final String GET_APP = ROOT + "/get-app";
+            public static final String GET_APP_CONDITION = ROOT + "/get-list-condition";
         }
     }
 }

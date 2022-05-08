@@ -10,7 +10,7 @@ export function counterReset() {
 
 export function useCounterReset() {
   const dispatch = useDispatch();
-  const count = useSelector(state => state.examples.count);
+  const count = useSelector(state => state.app_screen.count);
   const boundAction = useCallback(() => dispatch(counterReset()), [dispatch]);
 
   return { count, counterReset: boundAction };

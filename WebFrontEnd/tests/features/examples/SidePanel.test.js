@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { SidePanel } from '../../../src/features/examples/SidePanel';
+import { SidePanel } from '../../../src/features/app_screen/SidePanel';
 
 describe('examples/SidePanel', () => {
   it('renders node with correct class name', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { CounterPage } from '../../../src/features/examples/CounterPage';
+import { CounterPage } from '../../../src/features/app_screen/CounterPage';
 
 describe('examples/CounterPage', () => {
   it('renders node with correct class name', () => {

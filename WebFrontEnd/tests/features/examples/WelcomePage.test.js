@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { WelcomePage } from '../../../src/features/examples/WelcomePage';
+import { WelcomePage } from '../../../src/features/app_screen/WelcomePage';
 
 describe('examples/WelcomePage', () => {
   it('renders node with correct class name', () => {

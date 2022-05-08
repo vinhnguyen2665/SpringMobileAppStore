@@ -17,6 +17,9 @@ public class ResponseAPI<T> {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Long dataId;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private String hostUrl;
+
 	public ResponseAPI() {
 	}
 
@@ -89,6 +92,14 @@ public class ResponseAPI<T> {
 
 	public void setDataId(Long dataId) {
 		this.dataId = dataId;
+	}
+
+	public String getHostUrl() {
+		return hostUrl;
+	}
+
+	public void setHostUrl(String hostUrl) {
+		this.hostUrl = hostUrl;
 	}
 
 	@Override

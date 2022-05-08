@@ -8,13 +8,13 @@ import {
   EXAMPLES_FETCH_REDDIT_LIST_SUCCESS,
   EXAMPLES_FETCH_REDDIT_LIST_FAILURE,
   EXAMPLES_FETCH_REDDIT_LIST_DISMISS_ERROR,
-} from '../../../../src/features/examples/redux/constants';
+} from '../../../../src/features/app_screen/redux/constants';
 
 import {
   fetchRedditList,
   dismissFetchRedditListError,
   reducer,
-} from '../../../../src/features/examples/redux/fetchRedditList';
+} from '../../../../src/features/app_screen/redux/fetchRedditList';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);

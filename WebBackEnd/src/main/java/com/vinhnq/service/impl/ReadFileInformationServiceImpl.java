@@ -6,9 +6,8 @@ import com.dd.plist.NSString;
 import com.dd.plist.PropertyListParser;
 import com.vinhnq.beans.AppInfoBean;
 import com.vinhnq.beans.FileCustom;
-import com.vinhnq.common.CommonConst;
-import com.vinhnq.common.EntityUtils;
-import com.vinhnq.common.FileUtils;
+import com.vinhnq.beans.FileSize;
+import com.vinhnq.common.*;
 
 import com.vinhnq.entity.AppInfo;
 import com.vinhnq.kylinworks.IPngConverter;
@@ -20,12 +19,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,25 +51,28 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
     }
 
     @Override
-    public AppInfoBean read(File file) {
+    public AppInfoBean read(File file, FileSize size, String hostUrl) {
         String extension = FilenameUtils.getExtension(file.getPath());
         AppInfoBean result = null;
         if(AppInfoBean.APK.equals(extension.toLowerCase())){
-            result = readFileAPK(file);
+            result = readFileAPK(file, size);
         } else if(AppInfoBean.IPA.equals(extension.toLowerCase())){
-            result = readFileIPA(file);
+            result = readFileIPA(file, size, hostUrl);
         }
         AppInfo appInfo = EntityUtils.convertApplicationInformationToAppInfo(result);
         appInfo.setDeleteFlg(CommonConst.DELETE_FLG.NON_DELETE);
         appInfo.setCreateDate(new Timestamp(new Date().getTime()));
         appInfo.setId(0);
-
         AppInfo app = this.appInfoRepository.saveAndFlush(appInfo);
-        return EntityUtils.convertAppInfoToAppInfoBean(app);
+        AppInfoBean re = EntityUtils.convertAppInfoToAppInfoBean(app);
+        if(AppInfoBean.IPA.equals(re.getAppType())){
+            createManifestFile(re, result.getOutDir(), hostUrl);
+        }
+        return re;
     }
 
     @Override
-    public AppInfoBean readFileAPK(File apk) {
+    public AppInfoBean readFileAPK(File apk, FileSize size) {
         try {
             String currentTimeString = CommonConst.SIMPLE_DATE_FORMAT.formatterYYYYMMDD_HHMMSS_SSS.format(new Date());
             ApkFile apkFile = new ApkFile(apk);
@@ -104,12 +108,15 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
             app.setVersionCode(apkMeta.getVersionCode());
             app.setVersionCodeString(String.valueOf(apkMeta.getVersionCode()));
             app.setVersionName(apkMeta.getVersionName());
+            app.setAppSize(size.getValueFormat());
+            app.setAppSizeUnit(size.getUnit());
 
             Path outDir = Paths.get(CommonConst.COMMON_FILE.HOME_APK_RESOURCE , app.getPackageName(), app.getVersionName() + "_" + currentTimeString);
             FileUtils.createDirectoryIfNotExists(outDir.toString());
             Path outApkPath = Paths.get(outDir.toString(), apk.getName());
 
             Files.copy(Paths.get(apk.getPath()), outApkPath, StandardCopyOption.REPLACE_EXISTING);
+            app.setOutDir(outDir);
             app.setAppPath(outApkPath.toString());
             String iconPath = null;
             if (null != maxDensity) {
@@ -151,8 +158,9 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
     }
 
     @Override
-    public AppInfoBean readFileIPA(File ipaFile) {
+    public AppInfoBean readFileIPA(File ipaFile, FileSize size, String hostUrl) {
         try {
+
             String currentTimeString = CommonConst.SIMPLE_DATE_FORMAT.formatterYYYYMMDD_HHMMSS_SSS.format(new Date());
             AppInfoBean app = new AppInfoBean(AppInfoBean.IPA);
 
@@ -234,12 +242,16 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
             app.setVersionCodeString(map.get("CFBundleVersion"));
             app.setVersionName(map.get("CFBundleShortVersionString"));
             app.setAppName(map.get("CFBundleDisplayName"));
+            app.setAppSize(size.getValueFormat());
+            app.setAppSizeUnit(size.getUnit());
 
             Path outDir = Paths.get(CommonConst.COMMON_FILE.HOME_IPA_RESOURCE, app.getPackageName(), app.getVersionName() + "_" + currentTimeString);
             FileUtils.createDirectoryIfNotExists(outDir.toString());
 
             Path ipaOutPath = Paths.get(String.valueOf(outDir), ipaFile.getName());
             Files.copy(Paths.get(ipaFile.toString()), ipaOutPath, StandardCopyOption.REPLACE_EXISTING);
+
+            app.setOutDir(outDir);
             app.setAppPath(ipaOutPath.toString());
 
             FileCustom iconMaxSize = iconList.stream()
@@ -263,6 +275,37 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
         return null;
     }
 
+    @Override
+    public Path createManifestFile(AppInfoBean ipaApp, Path outDir, String hostUrl) {
+        try {
+            VelocityEngine velocityEngine = new VelocityEngine();
+            velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER,"classpath");
+            velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+            velocityEngine.init();
+
+            Template t = velocityEngine.getTemplate(TemplateConst.MANIFEST_PLIST_TEMPLATE);
+
+            VelocityContext context = new VelocityContext();
+            context.put("ipaUrl", hostUrl + URLConst.APP_INFO.API.GET_ICON + "?id=" + ipaApp.getId());
+            context.put("iconPath", hostUrl + URLConst.APP_INFO.API.GET_APP + "?id=" + ipaApp.getId());
+            context.put("packageName", ipaApp.getPackageName());
+            context.put("versionName", ipaApp.getVersionName());
+            context.put("appName", ipaApp.getAppName());
+
+            StringWriter writer = new StringWriter();
+            t.merge( context, writer );
+
+            Path out = Paths.get(outDir.toString(), "manifest.plist");
+            FileWriter fw = new FileWriter(out.toString());
+            fw.write(writer.toString());
+            fw.close();
+
+            return out;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 
     public static FileCustom extractFile(Path outDir, ZipInputStream zis, ZipEntry zipEntry) throws IOException {
         byte[] buffer = new byte[1024];

@@ -1,11 +1,11 @@
 import {
   EXAMPLES_COUNTER_PLUS_ONE,
-} from '../../../../src/features/examples/redux/constants';
+} from '../../../../src/features/app_screen/redux/constants';
 
 import {
   counterPlusOne,
   reducer,
-} from '../../../../src/features/examples/redux/counterPlusOne';
+} from '../../../../src/features/app_screen/redux/counterPlusOne';
 
 describe('examples/redux/counterPlusOne', () => {
   it('returns correct action by counterPlusOne', () => {

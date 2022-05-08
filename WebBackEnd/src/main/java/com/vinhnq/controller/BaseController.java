@@ -1,5 +1,6 @@
 package com.vinhnq.controller;
 
+import com.vinhnq.common.NetUtils;
 import com.vinhnq.entity.User;
 import com.google.gson.Gson;
 import com.vinhnq.common.CommonConst;
@@ -55,6 +56,11 @@ public abstract class BaseController {
     @ModelAttribute("currentPath")
     protected String currentPath(HttpServletRequest request) {
         return request.getRequestURI().replace(request.getContextPath(), "").replaceAll(URLConst.lang_support_regex, "");
+    }
+
+    @ModelAttribute("hostUrl")
+    protected String hostUrl(HttpServletRequest request) {
+        return NetUtils.getURL(request);
     }
     @ModelAttribute("lang")
     protected String lang(HttpServletRequest request) {

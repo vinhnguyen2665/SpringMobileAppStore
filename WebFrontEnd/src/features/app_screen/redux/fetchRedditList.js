@@ -65,9 +65,9 @@ export function useFetchRedditList() {
 
   const { redditList, fetchRedditListPending, fetchRedditListError } = useSelector(
     state => ({
-      redditList: state.examples.redditList,
-      fetchRedditListPending: state.examples.fetchRedditListPending,
-      fetchRedditListError: state.examples.fetchRedditListError,
+      redditList: state.app_screen.redditList,
+      fetchRedditListPending: state.app_screen.fetchRedditListPending,
+      fetchRedditListError: state.app_screen.fetchRedditListError,
     }),
     shallowEqual,
   );

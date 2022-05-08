@@ -237,7 +237,7 @@
 <div class="wrapper d-flex align-items-stretch">
     <nav id="sidebar" class="active">
         <div>
-            <a href="${contextPath}/${lang}<%= URLConst.DASHBOARD.HOME %>" class="logo show " style="background: #ffffff00 !important;">
+            <a href="${contextPath}/${lang}<%= URLConst.DASHBOARD.ROOT %>" class="logo show " style="background: #ffffff00 !important;">
             <div class="d-flex justify-content-center" style="display: block">
                 <span class="material-icons" style="font-size: 80px;">home</span>
                 <span class="show-text" style="font-size: 32px;position: absolute; top: 76px;"> Spring System</span>
@@ -253,7 +253,7 @@
                 </a>
             </li>
             <li class="active <%= CommonCode.selectedMenu( pageContext.getAttribute("selectedMenu"), CommonConst.PAGE_CODE.dashboard) %>">
-                <a href="${contextPath}/${lang}<%= URLConst.DASHBOARD.HOME %>">
+                <a href="${contextPath}/${lang}<%= URLConst.DASHBOARD.ROOT %>">
                     <span class="fas fa-tachometer-alt"></span>
                     <span class="show-text"><spring:message code="LAYOUT.dashboard" /></span>
                 </a>

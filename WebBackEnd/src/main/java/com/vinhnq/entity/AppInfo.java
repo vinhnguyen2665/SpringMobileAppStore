@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Table(name = "app_info")
 public class AppInfo {
     private long id;
-    private String type;
+    private String appType;
     private String appName;
     private String packageName;
     private long versionCode;
@@ -15,11 +15,14 @@ public class AppInfo {
     private String versionName;
     private String iconPath;
     private String appPath;
+    private Double appSize;
+    private String appSizeUnit;
     private String deleteFlg;
     private Timestamp createDate;
     private long createById;
     private Timestamp updateDate;
     private Long updateById;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +36,13 @@ public class AppInfo {
     }
 
     @Basic
-    @Column(name = "type", nullable = false, length = 20)
-    public String getType() {
-        return type;
+    @Column(name = "app_type", nullable = false, length = 20)
+    public String getAppType() {
+        return appType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAppType(String appType) {
+        this.appType = appType;
     }
 
     @Basic
@@ -53,7 +56,7 @@ public class AppInfo {
     }
 
     @Basic
-    @Column(name = "package_name", nullable = false, length = 1)
+    @Column(name = "package_name", nullable = false, length = 255)
     public String getPackageName() {
         return packageName;
     }
@@ -110,6 +113,26 @@ public class AppInfo {
 
     public void setAppPath(String appPath) {
         this.appPath = appPath;
+    }
+
+    @Basic
+    @Column(name = "app_size", nullable = true)
+    public Double getAppSize() {
+        return appSize;
+    }
+
+    public void setAppSize(Double appSize) {
+        this.appSize = appSize;
+    }
+
+    @Basic
+    @Column(name = "app_size_unit", nullable = true, length = 20)
+    public String getAppSizeUnit() {
+        return appSizeUnit;
+    }
+
+    public void setAppSizeUnit(String appSizeUnit) {
+        this.appSizeUnit = appSizeUnit;
     }
 
     @Basic
@@ -172,7 +195,7 @@ public class AppInfo {
         if (id != appInfo.id) return false;
         if (versionCode != appInfo.versionCode) return false;
         if (createById != appInfo.createById) return false;
-        if (type != null ? !type.equals(appInfo.type) : appInfo.type != null) return false;
+        if (appType != null ? !appType.equals(appInfo.appType) : appInfo.appType != null) return false;
         if (appName != null ? !appName.equals(appInfo.appName) : appInfo.appName != null) return false;
         if (packageName != null ? !packageName.equals(appInfo.packageName) : appInfo.packageName != null) return false;
         if (versionCodeString != null ? !versionCodeString.equals(appInfo.versionCodeString) : appInfo.versionCodeString != null)
@@ -191,7 +214,7 @@ public class AppInfo {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (appType != null ? appType.hashCode() : 0);
         result = 31 * result + (appName != null ? appName.hashCode() : 0);
         result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
         result = 31 * result + (int) (versionCode ^ (versionCode >>> 32));

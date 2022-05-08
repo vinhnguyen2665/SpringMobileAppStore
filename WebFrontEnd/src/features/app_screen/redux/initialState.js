@@ -13,7 +13,9 @@ const initialState = {
   isShowLogin: false,
   accessToken: "",
   isAuthenticated: false,
-  loginFailure: false
+  loginFailure: false,
+  isLoading: false,
+  appList: [],
 };
 
 export default initialState;

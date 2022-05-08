@@ -13,9 +13,9 @@ export function useUserLogin() {
     const token = getToken();
     const {isAuthenticated, loginFailure, accessToken} = useSelector(
         state => ({
-            isAuthenticated: token ? true: state.examples.isAuthenticated,
-            loginFailure: state.examples.loginFailure,
-            accessToken: token ? token : state.examples.accessToken,
+            isAuthenticated: token ? true : state.app_screen.isAuthenticated,
+            loginFailure: state.app_screen.loginFailure,
+            accessToken: token ? token : state.app_screen.accessToken,
         }),
         shallowEqual,
     );
@@ -44,7 +44,9 @@ export function useUserLogin() {
 }
 
 export const getToken = () => {
-    return localStorage.getItem("accessToken") || "";
+    const token = localStorage.getItem("accessToken") || "";
+    axios.defaults.headers.common['Authorization'] = token;
+    return token;
 };
 
 // Rekit uses redux-thunk for async actions by default: https://github.com/gaearon/redux-thunk
@@ -64,7 +66,7 @@ export function userLogin(username, password) {
                 res => {
                     const type = TYPES.LOGIN_SUCCESS;
                     const data = res.data;
-                    if(data.data.accessToken){
+                    if (data.data.accessToken) {
                         dispatch({
                             type: TYPES.LOGIN_SUCCESS,
                             data: res.data.data,

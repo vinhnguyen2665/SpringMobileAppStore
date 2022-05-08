@@ -1,4 +1,4 @@
-import reducer from '../../../../src/features/examples/redux/reducer';
+import reducer from '../../../../src/features/app_screen/redux/reducer';
 
 describe('examples/redux/reducer', () => {
   it('does nothing if no matched action', () => {

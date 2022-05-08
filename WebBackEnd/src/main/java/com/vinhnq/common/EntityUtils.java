@@ -674,8 +674,8 @@ public class EntityUtils {
         if (null != appInfoBean.getDeleteFlg()) {
             appInfo.setDeleteFlg(appInfoBean.getDeleteFlg());
         }
-        if (null != appInfoBean.getType()) {
-            appInfo.setType(appInfoBean.getType());
+        if (null != appInfoBean.getAppType()) {
+            appInfo.setAppType(appInfoBean.getAppType());
         }
         if (null != appInfoBean.getAppPath()) {
             appInfo.setAppPath(appInfoBean.getAppPath());
@@ -691,6 +691,12 @@ public class EntityUtils {
         }
         if (null != appInfoBean.getVersionCodeString()) {
             appInfo.setVersionCodeString(appInfoBean.getVersionCodeString());
+        }
+        if (null != appInfoBean.getAppSize()) {
+            appInfo.setAppSize(appInfoBean.getAppSize());
+        }
+        if (null != appInfoBean.getAppSizeUnit()) {
+            appInfo.setAppSizeUnit(appInfoBean.getAppSizeUnit());
         }
         return appInfo;
     }
@@ -718,7 +724,7 @@ public class EntityUtils {
         if (null == appInfo) {
             return null;
         }
-        AppInfoBean appInfoBean = new AppInfoBean(appInfo.getType());
+        AppInfoBean appInfoBean = new AppInfoBean(appInfo.getAppType());
         appInfoBean.setId(appInfo.getId());
         appInfoBean.setVersionCode(appInfo.getVersionCode());
         appInfoBean.setCreateById(appInfo.getCreateById());
@@ -742,8 +748,8 @@ public class EntityUtils {
         if (null != appInfo.getDeleteFlg()) {
             appInfoBean.setDeleteFlg(appInfo.getDeleteFlg());
         }
-        if (null != appInfo.getType()) {
-            appInfoBean.setType(appInfo.getType());
+        if (null != appInfo.getAppType()) {
+            appInfoBean.setAppType(appInfo.getAppType());
         }
         if (null != appInfo.getAppPath()) {
             appInfoBean.setAppPath(appInfo.getAppPath());
@@ -754,10 +760,16 @@ public class EntityUtils {
         if (null != appInfo.getCreateDate()) {
             appInfoBean.setCreateDate(appInfo.getCreateDate());
         }
-
         if (null != appInfo.getVersionCodeString()) {
             appInfoBean.setVersionCodeString(appInfo.getVersionCodeString());
         }
+        if (null != appInfo.getAppSize()) {
+            appInfoBean.setAppSize(appInfo.getAppSize());
+        }
+        if (null != appInfo.getAppSizeUnit()) {
+            appInfoBean.setAppSizeUnit(appInfo.getAppSizeUnit());
+        }
+
         if (encrypt) {
             return appInfoBean.encrypt();
         } else {
