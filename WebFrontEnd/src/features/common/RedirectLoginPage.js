@@ -7,7 +7,7 @@ export default function RedirectLoginPage() {
     showLoginPopup();
     return (
         <>
-            <Redirect to='/'  />
+            <Redirect to='/manager/login'  />
         </>
     );
 }
