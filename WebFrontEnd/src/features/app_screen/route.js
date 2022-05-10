@@ -7,10 +7,10 @@ export default {
   path: 'manager',
   component: Layout,
   childRoutes: [
-    { path: '', component: AppList, isIndex: true, requiredAuthenticated: false},
-    { path: 'app/:appType/:packageName/:versionName', component: AppDetail, requiredAuthenticated: false},
-    { path: 'counter', component: CounterPage, requiredAuthenticated: false},
-    { path: 'counter', component: CounterPage, requiredAuthenticated: false},
+    { path: '', component: AppList, isIndex: true, requiredAuthenticated: true},
+    { path: 'app/:appType/:packageName/:versionName', component: AppDetail, requiredAuthenticated: true},
+    { path: 'counter', component: CounterPage, requiredAuthenticated: true},
+    { path: 'counter', component: CounterPage, requiredAuthenticated: true},
     { path: 'reddit', component: RedditListPage,  requiredAuthenticated: true},
   ],
 };

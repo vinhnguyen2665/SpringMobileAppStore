@@ -2,17 +2,30 @@ import React, {useEffect, useCallback} from 'react';
 import {useAppList} from "./redux/apiAppList";
 import {AppItem} from "../common/AppElement/AppItem";
 import {MODE} from "./redux/constants";
-import {useParams} from "react-router-dom";
+import {useParams, useLocation} from "react-router-dom";
 
 
 export default function AppDetail() {
+
+    function useQuery() {
+        const {search} = useLocation();
+
+        return React.useMemo(() => new URLSearchParams(search), [search]);
+    }
+
     const params = useParams();
-    console.log(params);
+    const query = useQuery();
+
     const {isLoading, appList, appListConditionApi} = useAppList();
     let c = '';
-    const listApp = (list) => {
+    const listApp = (list, appIdSelected) => {
         let child = [];
-        for (let i = 1; i < list.length; i++) {
+        if(appIdSelected){
+            list = list.filter(app => app.id != appIdSelected)
+        } else {
+            list = list.filter(app => app.id != list[0].id)
+        }
+        for (let i = 0; i < list.length; i++) {
             const data = list[i];
             data.mode = MODE.LIST;
             AppItem(data)
@@ -20,9 +33,14 @@ export default function AppDetail() {
         }
         return child;
     }
-    const renderItem = (list) => {
-        if(list.length > 0){
-            const data = list[0];
+    const renderItem = (list, appIdSelected) => {
+        if (list.length > 0) {
+            let data = {};
+            if (appIdSelected) {
+                data = list.filter(app => app.id == appIdSelected)[0];
+            } else {
+                data = list[0];
+            }
             data.mode = MODE.DETAILS;
             data.noneLink = true;
             return AppItem(data);
@@ -37,12 +55,12 @@ export default function AppDetail() {
     return (
         <div className="app-list-container container col-lg-12">
             <div id="detail" className={"row"}>
-                {renderItem(appList)}
+                {renderItem(appList, query.get("id"))}
             </div>
             <div id="list">
-                    <div className={"row"}>
-                        {listApp(appList)}
-                    </div>
+                <div className={"row"}>
+                    {listApp(appList, query.get("id"))}
+                </div>
             </div>
         </div>
     );

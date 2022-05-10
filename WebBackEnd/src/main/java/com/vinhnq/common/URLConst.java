@@ -84,11 +84,12 @@ public class URLConst {
              */
             public static final String GET_APP_INFO_LATEST = ROOT + "/{packageName:.+}/{type}";
             public static final String GET_APP_INFO = ROOT + "/{packageName:.+}/{type}/{versionCode:.+}";
-            public static final String CHECK_APP_VERSION = ROOT + "/check/{packageName:.+}/{type}/{versionCode:.+}";
+            public static final String VERIFY_APP_VERSION = ROOT + "/verify/{packageName:.+}/{type}/{versionCode:.+}";
             public static final String GET_LIST = ROOT + "/list";
             public static final String GET_LIST_FOR_HOME = ROOT + "/list-for-home";
             public static final String GET_ICON = ROOT + "/get-icon";
             public static final String GET_APP = ROOT + "/get-app";
+            public static final String GET_MANIFEST = ROOT + "/get-manifest";
             public static final String GET_APP_CONDITION = ROOT + "/get-list-condition";
         }
     }

@@ -178,10 +178,11 @@ public class CommonConst {
 		public static String HOME_PRODUCTS_IMAGES = HOME_IMAGES.concat(File.separator).concat("product_images")
 				.concat(File.separator);
 
-		public static String HOME_APK_RESOURCE = HOME_RESOURCE.concat(File.separator).concat("APP_RESOURCE")
-				.concat(File.separator).concat(AppInfoBean.APK.toUpperCase()).concat(File.separator);
-		public static String HOME_IPA_RESOURCE = HOME_RESOURCE.concat(File.separator).concat("APP_RESOURCE")
-				.concat(File.separator).concat(AppInfoBean.IPA.toUpperCase()).concat(File.separator);
+		public static String HOMR_APP_RESOURCE = HOME_RESOURCE.concat(File.separator).concat("APP_RESOURCE")
+				.concat(File.separator);
+
+		public static String HOME_APK_RESOURCE = HOMR_APP_RESOURCE.concat(AppInfoBean.APK.toUpperCase()).concat(File.separator);
+		public static String HOME_IPA_RESOURCE = HOMR_APP_RESOURCE.concat(AppInfoBean.IPA.toUpperCase()).concat(File.separator);
 
 		public static String HOME_TMP = HOME_RESOURCE.concat(File.separator).concat("tmp")
 				.concat(File.separator);

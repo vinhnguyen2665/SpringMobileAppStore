@@ -15,6 +15,7 @@ public class AppInfo {
     private String versionName;
     private String iconPath;
     private String appPath;
+    private String manifestPath;
     private Double appSize;
     private String appSizeUnit;
     private String deleteFlg;
@@ -113,6 +114,16 @@ public class AppInfo {
 
     public void setAppPath(String appPath) {
         this.appPath = appPath;
+    }
+
+    @Basic
+    @Column(name = "manifest_path", nullable = true, length = 255)
+    public String getManifestPath() {
+        return manifestPath;
+    }
+
+    public void setManifestPath(String manifestPath) {
+        this.manifestPath = manifestPath;
     }
 
     @Basic

@@ -2,7 +2,7 @@
   "name": "ReactJSRekit",
   "version": "1.0.0",
   "private": true,
-  "proxy": "http://192.168.100.123:8080",
+  "proxy": "https://download.zero9vn.com/AppStore",
   "scripts": {
     "start": "cross-env PORT=3100 node scripts/start.js",
     "build": "node scripts/build.js",

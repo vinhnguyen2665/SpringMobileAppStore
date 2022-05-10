@@ -680,6 +680,9 @@ public class EntityUtils {
         if (null != appInfoBean.getAppPath()) {
             appInfo.setAppPath(appInfoBean.getAppPath());
         }
+        if (null != appInfoBean.getManifestPath()) {
+            appInfo.setManifestPath(appInfoBean.getManifestPath());
+        }
         if (null != appInfoBean.getIconPath()) {
             appInfo.setIconPath(appInfoBean.getIconPath());
         }
@@ -753,6 +756,9 @@ public class EntityUtils {
         }
         if (null != appInfo.getAppPath()) {
             appInfoBean.setAppPath(appInfo.getAppPath());
+        }
+        if (null != appInfo.getManifestPath()) {
+            appInfoBean.setManifestPath(appInfo.getManifestPath());
         }
         if (null != appInfo.getIconPath()) {
             appInfoBean.setIconPath(appInfo.getIconPath());

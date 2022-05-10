@@ -5,32 +5,42 @@ import {
     MODE,
     URL
 } from '../../app_screen/redux/constants';
-import {Link, useLocation, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 import {proxy} from "../../../../package.json";
+
+import {Utils} from "../Utils";
 
 
 export const AppItem = (props) => {
 
-    // const location = useLocation();
+    //const location = useLocation();
+    const ipaInstall = (plist) => {
+        /*        const event = this.props;
+                event && event.stopPropagation()*/
+        window.location.href = plist
+        /* window.location.href = 'itms-services://?action=download-manifest&url=https://store.zero9vn.com/manifest/manifest.plist'*/
+    }
+
     const downloadElement = (appInfo) => {
         if (appInfo.mode == MODE.DETAILS) {
-            const path = proxy + '/api/app/get-app?id=' + appInfo.id;
-
+            const textInstall = appInfo.appType == 'ipa' && Utils.isIOS() ? 'Install' : 'Download';
+            const path = appInfo.appType == 'ipa' && Utils.isIOS() ? 'itms-services://?action=download-manifest&url=' + proxy + '/' + appInfo.manifestResource : proxy + '/api/app/get-app?id=' + appInfo.id;
+            const linkTo = window.location.origin + '/app/' + appInfo.appType + '/' + appInfo.packageName + '/' + appInfo.versionName + '?id=' + appInfo.id;
             return <>
                 <div className="qrcode" title="">
                     <QRCode width="256px" height="256px"
-                            value={path} title={path}/>
+                            value={linkTo} title={linkTo}/>
                 </div>
-                <a className={"install"} target="_self" href={path}>Download</a>
+                {/*  <a className={"install"} target="_self" href={path}>Download</a>*/}
+                <div className={"install"} onClick={() => ipaInstall(path)}>{textInstall}</div>
             </>
         }
     }
-    const item = () => {
-        const appInfo = props;
+    const item = (appInfo) => {
         let iconType = '';
         let classNameStr = 'app-item col-12 col-sm-6 col-md-4 col-lg-3';
-        let linkTo = '/app/' + appInfo.appType + '/' + appInfo.packageName + '/' + appInfo.versionName;
+        let linkTo = '/app/' + appInfo.appType + '/' + appInfo.packageName + '/' + appInfo.versionName + '?id=' + appInfo.id;
         if (appInfo.mode == MODE.DETAILS) {
             classNameStr = 'app-item';
         }
@@ -68,5 +78,5 @@ export const AppItem = (props) => {
         </>;
     }
 
-    return item();
+    return item(props);
 }

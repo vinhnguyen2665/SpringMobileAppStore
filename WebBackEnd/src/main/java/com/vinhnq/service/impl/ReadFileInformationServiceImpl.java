@@ -46,6 +46,7 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
     private static final Logger logger = LogManager.getLogger(ReadFileInformationServiceImpl.class);
 
     private final AppInfoRepository appInfoRepository;
+
     public ReadFileInformationServiceImpl(AppInfoRepository appInfoRepository) {
         this.appInfoRepository = appInfoRepository;
     }
@@ -54,9 +55,9 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
     public AppInfoBean read(File file, FileSize size, String hostUrl) {
         String extension = FilenameUtils.getExtension(file.getPath());
         AppInfoBean result = null;
-        if(AppInfoBean.APK.equals(extension.toLowerCase())){
+        if (AppInfoBean.APK.equals(extension.toLowerCase())) {
             result = readFileAPK(file, size);
-        } else if(AppInfoBean.IPA.equals(extension.toLowerCase())){
+        } else if (AppInfoBean.IPA.equals(extension.toLowerCase())) {
             result = readFileIPA(file, size, hostUrl);
         }
         AppInfo appInfo = EntityUtils.convertApplicationInformationToAppInfo(result);
@@ -64,10 +65,13 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
         appInfo.setCreateDate(new Timestamp(new Date().getTime()));
         appInfo.setId(0);
         AppInfo app = this.appInfoRepository.saveAndFlush(appInfo);
-        AppInfoBean re = EntityUtils.convertAppInfoToAppInfoBean(app);
-        if(AppInfoBean.IPA.equals(re.getAppType())){
-            createManifestFile(re, result.getOutDir(), hostUrl);
+
+        if (AppInfoBean.IPA.equals(app.getAppType())) {
+            Path manifestPath = createManifestFile(app, result.getOutDir(), hostUrl);
+            appInfo.setManifestPath(manifestPath.toString());
+            app = this.appInfoRepository.saveAndFlush(appInfo);
         }
+        AppInfoBean re = EntityUtils.convertAppInfoToAppInfoBean(app);
         return re;
     }
 
@@ -85,7 +89,7 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
             List<Icon> iconList = new ArrayList();
             for (IconFace icon : iconFace) {
                 List<Icon> ic = parseApkIconInfo(icon);
-                if(!ic.isEmpty()){
+                if (!ic.isEmpty()) {
                     iconList.addAll(ic);
                 }
             }
@@ -95,7 +99,7 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
                     .max(Comparator.comparing(Icon::getDensity))
                     .orElse(null);
 
-            if("xml".equals(FilenameUtils.getExtension(maxDensity.getPath()))) {
+            if ("xml".equals(FilenameUtils.getExtension(maxDensity.getPath()))) {
                 maxDensity = iconList.stream()
                         .filter(icon -> (!"xml".equals(FilenameUtils.getExtension(icon.getPath()))))
                         .max(Comparator.comparing(Icon::getDensity))
@@ -111,7 +115,7 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
             app.setAppSize(size.getValueFormat());
             app.setAppSizeUnit(size.getUnit());
 
-            Path outDir = Paths.get(CommonConst.COMMON_FILE.HOME_APK_RESOURCE , app.getPackageName(), app.getVersionName() + "_" + currentTimeString);
+            Path outDir = Paths.get(CommonConst.COMMON_FILE.HOME_APK_RESOURCE, app.getPackageName(), app.getVersionName() + "_" + currentTimeString);
             FileUtils.createDirectoryIfNotExists(outDir.toString());
             Path outApkPath = Paths.get(outDir.toString(), apk.getName());
 
@@ -276,31 +280,31 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
     }
 
     @Override
-    public Path createManifestFile(AppInfoBean ipaApp, Path outDir, String hostUrl) {
+    public Path createManifestFile(AppInfo ipaApp, Path outDir, String hostUrl) {
         try {
             VelocityEngine velocityEngine = new VelocityEngine();
-            velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER,"classpath");
+            velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
             velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
             velocityEngine.init();
 
             Template t = velocityEngine.getTemplate(TemplateConst.MANIFEST_PLIST_TEMPLATE);
 
             VelocityContext context = new VelocityContext();
-            context.put("ipaUrl", hostUrl + URLConst.APP_INFO.API.GET_ICON + "?id=" + ipaApp.getId());
-            context.put("iconPath", hostUrl + URLConst.APP_INFO.API.GET_APP + "?id=" + ipaApp.getId());
+            context.put("ipaUrl", hostUrl + URLConst.APP_INFO.API.GET_APP + "?id=" + ipaApp.getId());
+            context.put("iconPath", hostUrl + URLConst.APP_INFO.API.GET_ICON + "?id=" + ipaApp.getId());
             context.put("packageName", ipaApp.getPackageName());
             context.put("versionName", ipaApp.getVersionName());
             context.put("appName", ipaApp.getAppName());
 
             StringWriter writer = new StringWriter();
-            t.merge( context, writer );
+            t.merge(context, writer);
 
-            Path out = Paths.get(outDir.toString(), "manifest.plist");
-            FileWriter fw = new FileWriter(out.toString());
+            Path outPath = Paths.get(outDir.toString(), "manifest.plist");
+            FileWriter fw = new FileWriter(outPath.toString());
             fw.write(writer.toString());
             fw.close();
 
-            return out;
+            return outPath;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);

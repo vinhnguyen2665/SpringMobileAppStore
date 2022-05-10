@@ -8,7 +8,7 @@ import {hot, setConfig} from 'react-hot-loader';
 import store from './common/store';
 import routeConfig from './common/routeConfig';
 import history from './common/history';
-import RedirectLoginPage from "./features/home/RedirectLoginPage";
+import RedirectLoginPage from "./features/common/RedirectLoginPage";
 import {useUserLogin} from "./features/app_screen/redux/userLoginActions";
 import { ToastContainer, toast } from 'react-toastify';
 

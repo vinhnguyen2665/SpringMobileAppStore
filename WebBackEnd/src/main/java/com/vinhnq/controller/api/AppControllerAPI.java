@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,9 +26,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +48,7 @@ public class AppControllerAPI extends BaseController {
         this.appService = appService;
     }
 
-    @RequestMapping(value = {URLConst.APP_INFO.API.CHECK_APP_VERSION}, method = RequestMethod.POST)
+    @RequestMapping(value = {URLConst.APP_INFO.API.VERIFY_APP_VERSION}, method = RequestMethod.GET)
     //@ApiOperation(value = URLConst.APP_INFO.API.GET_APP_INFO, authorizations = {@Authorization(value = "jwtToken")})
     @ResponseBody
     public ResponseAPI<AppInfoBean> checkApp(HttpServletRequest request, ModelMap modelMap,
@@ -66,7 +70,8 @@ public class AppControllerAPI extends BaseController {
             jsonObject.put("statusVersion", status);
             jsonObject.put("type", type);
             jsonObject.put("latestVersion", latestVersion.get());
-            jsonObject.put("yourVersion", requestVersion.get());
+            jsonObject.put("yourVersion", requestVersion.get()); //http://192.168.100.123:3100/app/apk/com.meishi/
+            jsonObject.put("latestUrl", NetUtils.getHttpsURL(request) + "/app" + "/" + appInfo.getAppType() + "/" + appInfo.getPackageName() + "/" + appInfo.getVersionName() + "?id=" + appInfo.getId());
             return new ResponseAPI(HttpStatus.OK.value(), CommonConst.COMMON_STRING.SUCCESS, jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -97,7 +102,7 @@ public class AppControllerAPI extends BaseController {
     }
 
     @RequestMapping(value = {URLConst.APP_INFO.API.GET_LIST}, method = RequestMethod.POST)
-    @ApiOperation(value = URLConst.APP_INFO.API.GET_LIST, authorizations = {@Authorization(value = "jwtToken")})
+   // @ApiOperation(value = URLConst.APP_INFO.API.GET_LIST, authorizations = {@Authorization(value = "jwtToken")})
     @ResponseBody
     public ResponseAPI<List<AppInfoBean>> getListAppInfoBean(HttpServletRequest request,
                                                              ModelMap modelMap) {
@@ -114,7 +119,7 @@ public class AppControllerAPI extends BaseController {
     }
 
     @RequestMapping(value = {URLConst.APP_INFO.API.GET_LIST_FOR_HOME}, method = RequestMethod.POST)
-    @ApiOperation(value = URLConst.APP_INFO.API.GET_LIST_FOR_HOME, authorizations = {@Authorization(value = "jwtToken")})
+    //@ApiOperation(value = URLConst.APP_INFO.API.GET_LIST_FOR_HOME, authorizations = {@Authorization(value = "jwtToken")})
     @ResponseBody
     public ResponseAPI<List<AppInfoBean>> getListAppInfoBeanForHome(HttpServletRequest request,
                                                              ModelMap modelMap) {
@@ -131,7 +136,7 @@ public class AppControllerAPI extends BaseController {
     }
 
     @RequestMapping(value = {URLConst.APP_INFO.API.GET_APP_CONDITION}, method = RequestMethod.POST, produces = "application/json; charset=UTF-8" )
-    @ApiOperation(value = URLConst.APP_INFO.API.GET_APP_CONDITION, authorizations = {@Authorization(value = "jwtToken")})
+   // @ApiOperation(value = URLConst.APP_INFO.API.GET_APP_CONDITION, authorizations = {@Authorization(value = "jwtToken")})
     @ResponseBody
     public ResponseAPI<List<AppInfoBean>> getListAppInfoBeanCondition(@RequestBody AppInfoBean appInfo) {
         List<AppInfoBean> list = new ArrayList<>();
@@ -180,17 +185,53 @@ public class AppControllerAPI extends BaseController {
             Optional<AppInfoBean> appInfo = this.appService.getAppInfo(id, false);
             File file = null;
             if(appInfo.isPresent()){
-                file = new File(appInfo.get().getAppPath());
+              file = new File(appInfo.get().getAppPath());
                 InputStream inputStream = new FileInputStream(file);
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
                 headers.add("Pragma", "no-cache");
                 headers.add("Expires", "0");
-                headers.add("Content-Disposition", "attachment; filename=" + URLEncoder.encode(appInfo.get().getAppName(), "UTF-8"));
+                headers.add("Content-Disposition", "attachment; filename=" + URLEncoder.encode(appInfo.get().getAppName() + "." + appInfo.get().getAppType(), "UTF-8"));
+                headers.setContentType(appInfo.get().getMediaType());
                 return ResponseEntity.ok()
                         .headers(headers)
                         .contentLength(file.length())
                         .contentType(appInfo.get().getMediaType())
+                        .body(new InputStreamResource(inputStream));
+   /*             InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
+                return new ResponseEntity<Resource>(inputStreamResource, null, HttpStatus.OK);*/
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        return null;
+    }
+    @RequestMapping(value = {URLConst.APP_INFO.API.GET_MANIFEST }, method = RequestMethod.GET, produces = "application/x-plist")
+    public ResponseEntity<InputStreamResource> getManifest(HttpServletRequest request,
+                                                @RequestParam long id) {
+        try {
+            Optional<AppInfoBean> appInfo = this.appService.getAppInfo(id, false);
+            File file = null;
+            if(appInfo.isPresent()){
+       /*            HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.valueOf("application/x-plist"));
+                file = new File(appInfo.get().getManifestPath());
+             InputStream stream = new FileInputStream(file);
+                InputStreamResource inputStreamResource = new InputStreamResource(stream);
+                return new ResponseEntity<Resource>(inputStreamResource, null, HttpStatus.OK);*/
+
+                file = new File(appInfo.get().getManifestPath());
+                InputStream inputStream = new FileInputStream(file);
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+                headers.add("Pragma", "no-cache");
+                headers.add("Expires", "0");
+                headers.add("Content-Disposition", "attachment; filename=manifest.plist");
+                headers.setContentType(MediaType.valueOf("application/x-plist"));
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentLength(file.length())
+                        .contentType(MediaType.parseMediaType("application/x-plist"))
                         .body(new InputStreamResource(inputStream));
             }
         } catch (Exception ex) {

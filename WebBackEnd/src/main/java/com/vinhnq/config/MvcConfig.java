@@ -1,11 +1,13 @@
 package com.vinhnq.config;
 
 
+import com.vinhnq.common.CommonConst;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -19,11 +21,10 @@ import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = { "vn.com.nsmv.controller" })
+@ComponentScan(basePackages = { "com.vinhnq" })
 public class MvcConfig implements WebMvcConfigurer {
-	
 
-    @Override
+	@Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
@@ -33,6 +34,10 @@ public class MvcConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/index.html").addResourceLocations("/WEB-INF/view/react-app/build/index.html");
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("/app-resource/**").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOMR_APP_RESOURCE);
+		registry.addResourceHandler("/app-resource/apk").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_APK_RESOURCE);
+		registry.addResourceHandler("/app-resource/ipa").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_IPA_RESOURCE);
+
 	}
 
 	@Bean

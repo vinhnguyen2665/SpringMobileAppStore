@@ -18,7 +18,6 @@ function LoginLogoutElement(props) {
 export default function SidePanel() {
     const {isShowLogin, showLoginPopup} = useShowLoginPopup();
     const {isAuthenticated, loginFailure, userLogin, userLogout} = useUserLogin();
-    console.log(loginFailure);
     const logout = () => {
         userLogout();
         window.location.reload();
@@ -36,13 +35,13 @@ export default function SidePanel() {
             <div className="examples-side-panel">
                 <ul className={"col-12"}>
                     <li>
-                        <Link to="/">Welcome</Link>
+                        <Link to="/manager">Welcome</Link>
                     </li>
                     <li>
-                        <Link to="/counter">Counter Demo</Link>
+                        <Link to="/manager/counter">Counter Demo</Link>
                     </li>
                     <li>
-                        <Link to="/reddit">Reddit API Demo</Link>
+                        <Link to="/manager/counter">Reddit API Demo</Link>
                     </li>
                     <li>
                         <LoginLogoutElement isAuthenticated={isAuthenticated} showLoginPopup={showLoginPopup}

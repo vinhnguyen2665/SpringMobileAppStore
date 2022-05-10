@@ -22,7 +22,6 @@ export default function AppList() {
         appListApi();
         // eslint-disable-next-line react-hooks/exhaustive-deps
         //c = renderItem();
-        console.log('useEffect has been called!');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

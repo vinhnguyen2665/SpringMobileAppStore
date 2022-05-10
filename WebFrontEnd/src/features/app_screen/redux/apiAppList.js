@@ -11,10 +11,6 @@ export function useAppList() {
 
     const dispatch = useDispatch();
 
-/*    dispatch({
-        type: TYPES.APP_LIST_BEGIN,
-    });*/
-
     const {isLoading, appList} = useSelector(
         state => ({
             isLoading: state.app_screen.isLoading,
@@ -23,11 +19,13 @@ export function useAppList() {
         shallowEqual,
     );
     const getAppListAction = useCallback(() => {
+            dispatch({type: TYPES.APP_LIST_BEGIN,});
             dispatch(getAppList());
         },
         [dispatch],
     );
     const getAppListConditionAction = useCallback((props) => {
+            dispatch({type: TYPES.APP_LIST_BEGIN,});
             dispatch(getAppListCondition(props));
         },
         [dispatch],
@@ -54,7 +52,7 @@ export function getAppList() {
                             type: type,
                             data: res.data.data,
                         });
-                        toast.success(data.message, {
+                        /*toast.success(data.message, {
                             position: "top-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -62,7 +60,7 @@ export function getAppList() {
                             pauseOnHover: true,
                             draggable: true,
                             progress: undefined,
-                        });
+                        });*/
                         resolve(res);
                     }
                     return {type: type, data: data};
@@ -75,6 +73,15 @@ export function getAppList() {
                         type: type,
                         data: {error: err},
                     });
+                    toast.error(data.message, {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                        });
                     reject(err);
                     return {type: type, data: data};
                 },
@@ -100,7 +107,7 @@ export function getAppListCondition(props) {
                             type: type,
                             data: res.data.data,
                         });
-                        toast.success(data.message, {
+                       /* toast.success(data.message, {
                             position: "top-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -108,7 +115,7 @@ export function getAppListCondition(props) {
                             pauseOnHover: true,
                             draggable: true,
                             progress: undefined,
-                        });
+                        });*/
                         resolve(res);
                     }
                     return {type: type, data: data};
@@ -120,6 +127,15 @@ export function getAppListCondition(props) {
                     dispatch({
                         type: type,
                         data: {error: err},
+                    });
+                    toast.error(data.message, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
                     });
                     reject(err);
                     return {type: type, data: data};

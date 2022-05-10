@@ -65,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/api/login").permitAll();
 		http.authorizeRequests().antMatchers("/common/**").permitAll();
 		http.authorizeRequests().antMatchers("/api/**").permitAll();
+		http.authorizeRequests().antMatchers("/app-resource/**").permitAll();
 		http.authorizeRequests().anyRequest().authenticated();
 
 		// Cấu hình cho Login Form.

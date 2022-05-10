@@ -58,7 +58,7 @@ public class FileAccessController {
                 File f = new File(Paths.get(CommonConst.COMMON_FILE.HOME_TMP, fileName).toString());
                 saveFile(file, f);
                 FileSize size = FileUtils.convertFileSize(file.getSize());
-                AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getURL(request)).encrypt();
+                AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getHttpsURL(request)).encrypt();
                 list.add(information);
             }
             if(null != files){
@@ -67,7 +67,7 @@ public class FileAccessController {
                     File f = new File(Paths.get(CommonConst.COMMON_FILE.HOME_TMP, fileName).toString());
                     saveFile(multipartFile, f);
                     FileSize size = FileUtils.convertFileSize(file.getSize());
-                    AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getURL(request)).encrypt();
+                    AppInfoBean information = readFileInformationService.read(f, size, NetUtils.getHttpsURL(request)).encrypt();
                     list.add(information);
                 }
             }
