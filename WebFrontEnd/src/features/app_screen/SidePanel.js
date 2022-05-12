@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {Button, Modal, Form} from 'react-bootstrap'
+import { GoogleLogin } from 'react-google-login';
 import {useShowLoginPopup} from './redux/hooks';
 import {useUserLogin} from "./redux/userLoginActions";
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,12 +17,29 @@ function LoginLogoutElement(props) {
 }
 
 export default function SidePanel() {
+    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
     const {isShowLogin, showLoginPopup} = useShowLoginPopup();
     const {isAuthenticated, loginFailure, userLogin, userLogout} = useUserLogin();
     const logout = () => {
         userLogout();
         window.location.reload();
     }
+
+    const onGoogleSuccess = (res) => {
+        console.log('Login Success: currentUser:', res.profileObj);
+        alert(
+            `Login Success`
+        );
+       // refreshTokenSetup(res);
+    };
+
+    const onGoogleFailure = (res) => {
+        console.log('Login failed: res:', res);
+        alert(
+            `Failed to login.`
+        );
+    };
 
     /*const [isShowLogin, isShowPopup] = React.useState(false);
     const showLoginPopup = () => {
@@ -84,6 +102,17 @@ export default function SidePanel() {
                                 <Form.Control className={"btn login"} type="button" value="Login"
                                               onClick={() => userLogin(username, password)}/>
                             </Form>
+                            {/*<div>
+                                <GoogleLogin
+                                    clientId={clientId}
+                                    buttonText="Login"
+                                    onSuccess={() => onGoogleSuccess}
+                                    onFailure={() => onGoogleFailure}
+                                    cookiePolicy={'single_host_origin'}
+                                    style={{ marginTop: '100px' }}
+                                    isSignedIn={true}
+                                />
+                            </div>*/}
                         </Modal.Body>
                     </div>
                 </div>
