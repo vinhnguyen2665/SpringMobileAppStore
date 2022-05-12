@@ -70,8 +70,7 @@ export default function SidePanel() {
                     </li>
                 </ul>
                 <div className="memo">
-                    This is a Rekit feature that contains some examples for you to quick learn how Rekit works.
-                    To remove it just delete the feature.
+                    © 2022 All Rights Reserved
                 </div>
 
             </div>
