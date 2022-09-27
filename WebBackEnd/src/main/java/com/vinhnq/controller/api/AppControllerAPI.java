@@ -8,14 +8,12 @@ import com.vinhnq.common.NetUtils;
 import com.vinhnq.common.URLConst;
 import com.vinhnq.controller.BaseController;
 import com.vinhnq.service.AppService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,12 +24,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +37,12 @@ public class AppControllerAPI extends BaseController {
     private static final Logger logger = LogManager.getLogger(AppControllerAPI.class);
 
     private final AppService appService;
+    private final Environment env;
 
     @Autowired
-    public AppControllerAPI(AppService appService) {
+    public AppControllerAPI(AppService appService, Environment env) {
         this.appService = appService;
+        this.env = env;
     }
 
     @RequestMapping(value = {URLConst.APP_INFO.API.VERIFY_APP_VERSION}, method = RequestMethod.GET)
@@ -66,12 +63,15 @@ public class AppControllerAPI extends BaseController {
             } else {
                 status = CommonConst.COMMON_STRING.OLD;
             }
+
+            String frontEndUrl = env.getProperty("system.front-end-url", "");
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("statusVersion", status);
             jsonObject.put("type", type);
             jsonObject.put("latestVersion", latestVersion.get());
             jsonObject.put("yourVersion", requestVersion.get()); //http://192.168.100.123:3100/app/apk/com.meishi/
-            jsonObject.put("latestUrl", NetUtils.getHttpsURL(request) + "/app" + "/" + appInfo.getAppType() + "/" + appInfo.getPackageName() + "/" + appInfo.getVersionName() + "?id=" + appInfo.getId());
+            jsonObject.put("latestUrl", frontEndUrl + "/app" + "/" + appInfo.getAppType() + "/" + appInfo.getPackageName() + "/" + appInfo.getVersionName() + "?id=" + appInfo.getId());
+            jsonObject.put("downloadUrl", NetUtils.getURL(request) + "/api/app/get-app?id=" + appInfo.getId());
             return new ResponseAPI(HttpStatus.OK.value(), CommonConst.COMMON_STRING.SUCCESS, jsonObject);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

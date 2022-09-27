@@ -1,6 +1,14 @@
 package com.vinhnq.service.impl;
 
+import com.vinhnq.beans.googleAuthentication.GoogleOauthResponse;
+import com.vinhnq.beans.googleAuthentication.GoogleOauthToken;
+import com.vinhnq.beans.googleAuthentication.GoogleTokenInfo;
+import com.vinhnq.beans.googleAuthentication.GoogleUserInfo;
+import com.vinhnq.common.googleoauth2.GoogleOAuth2Utils;
 import com.vinhnq.entity.User;
+
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,12 +29,16 @@ import com.vinhnq.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @Service
 //@Repository
@@ -43,19 +55,21 @@ public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
 
-    final
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider tokenProvider;
 
+    private final Environment environment;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, SecurityConfig securityConfig, MailService mailService, UserDAO userDAO, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
+    public UserServiceImpl(UserRepository userRepository, SecurityConfig securityConfig, MailService mailService, UserDAO userDAO, AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider, Environment environment) {
         this.userRepository = userRepository;
         this.securityConfig = securityConfig;
         this.mailService = mailService;
         this.userDAO = userDAO;
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
+        this.environment = environment;
     }
 
     @Override
@@ -73,6 +87,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(ex);
         }
     }
+
     @Override
 
     public List<User> getAllUserByHibernate() {
@@ -201,12 +216,118 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public LoginResponse googleOAuth2(GoogleOauthResponse oauthResponse) {
+        try {
+
+            String clientId = environment.getProperty("spring.security.oauth2.client.registration.google.client-id", "");
+            String clientSecret = environment.getProperty("spring.security.oauth2.client.registration.google.client-secret", "");
+            String redirectUri = environment.getProperty("system.redirect_uri", "");
+            // GoogleOauthToken oauthToken = GoogleOAuth2Utils.getToken(oauthResponse,clientId, clientSecret, redirectUri);
+            GoogleOAuth2Utils accessToken = new GoogleOAuth2Utils(GoogleOAuth2Utils.BASE_URL_TOKEN_API);
+            Response<GoogleOauthToken> googleOauthToken = accessToken.getRetrofitAPI().oauthTokenApi(clientSecret,
+                    clientId,
+                    oauthResponse.getCode(),
+                    "authorization_code",
+                    redirectUri).execute();
+            GoogleOauthToken oauthToken = googleOauthToken.body();
+            GoogleUserInfo googleUserInfo = getGoogleUserInfo(oauthToken);
+            //GoogleTokenInfo googleTokenInfo = getGoogleTokenInfo(oauthToken);
+            User user = new User();
+            user.setUserName(googleUserInfo.getEmail().replaceAll(CommonConst.REGEX.EMAIL_DOMAIN.toString(), ""));
+            user.setPassword(user.getUserName());
+            user.setFirstName(googleUserInfo.getFamily_name());
+            user.setLastName(googleUserInfo.getGiven_name());
+            user.setAuthority(CommonConst.COMMON_ROLE.U);
+            user.setCreateById(0);
+            user.setCreateDate(new Timestamp(new Date().getTime()));
+            user = this.register(user);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        /*accessToken.getRetrofitAPI().oauthTokenApi(clientSecret,
+                clientId,
+                oauthResponse.getCode(),
+                "authorization_code",
+                redirectUri).enqueue(new Callback<GoogleOauthToken>() {
+            public void onResponse(Call<GoogleOauthToken> call, Response<GoogleOauthToken> response) {
+                if (response.isSuccessful()) {
+                    System.out.println(response);
+                    GoogleOauthToken oauthToken = response.body();
+                    getGoogleUserInfo(oauthToken);
+                    getGoogleTokenInfo(oauthToken);
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            public void onFailure(Call<GoogleOauthToken> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });*/
+
+        return null;
+    }
+
+    private GoogleUserInfo getGoogleUserInfo(GoogleOauthToken oauthToken) {
+        try {
+            GoogleOAuth2Utils userInfo = new GoogleOAuth2Utils(GoogleOAuth2Utils.BASE_URL_USER_INFO_API);
+        /*userInfo.getRetrofitAPI().userInfoApi(oauthToken.getAccessToken()).enqueue(new Callback<GoogleUserInfo>() {
+            public void onResponse(Call<GoogleUserInfo> call, Response<GoogleUserInfo> response) {
+                if (response.isSuccessful()) {
+                    GoogleUserInfo googleUserInfo = response.body();
+                    System.err.println(googleUserInfo);
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            public void onFailure(Call<GoogleUserInfo> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });*/
+
+            Response<GoogleUserInfo> googleUserInfo = userInfo.getRetrofitAPI().userInfoApi(oauthToken.getAccessToken()).execute();
+            return googleUserInfo.body();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private GoogleTokenInfo getGoogleTokenInfo(GoogleOauthToken oauthToken) {
+        try {
+            GoogleOAuth2Utils userInfo = new GoogleOAuth2Utils(GoogleOAuth2Utils.BASE_URL_TOKEN_INFO_API);
+            Response<GoogleTokenInfo> googleUserInfo = userInfo.getRetrofitAPI().tokenInfoApi(oauthToken.getIdToken()).execute();
+            return googleUserInfo.body();
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+        /*userInfo.getRetrofitAPI().tokenInfoApi(oauthToken.getIdToken()).enqueue(new Callback<GoogleTokenInfo>() {
+            public void onResponse(Call<GoogleTokenInfo> call, Response<GoogleTokenInfo> response) {
+                if (response.isSuccessful()) {
+                    GoogleTokenInfo tokenInfo = response.body();
+                    System.err.println(tokenInfo);
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            public void onFailure(Call<GoogleTokenInfo> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });*/
+    }
+
+    @Override
     public Map<Long, UserBeans> getUsersBeansMap() {
         Map<Long, UserBeans> result = new HashMap<>();
         try {
             List<User> lstUsers = this.getAllUser();
             if (null != lstUsers) {
-                for (User user : lstUsers ) {
+                for (User user : lstUsers) {
                     UserBeans userBeans = EntityUtils.convertUserToUserBeans(user);
                     userBeans.setPassword(null);
                     result.put(userBeans.getId(), userBeans);

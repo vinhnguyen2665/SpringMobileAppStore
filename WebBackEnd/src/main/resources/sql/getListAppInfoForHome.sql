@@ -9,3 +9,4 @@ FROM app_info a # 'o' from 'oldest version_code in group'
                        AND a.delete_flg = '0'
 WHERE b.version_code is null
    or coalesce(b.update_date, b.create_date) is null # bigger version_code not found
+ORDER BY a.id desc

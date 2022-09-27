@@ -1,10 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation, useParams} from 'react-router-dom';
 import {Button, Modal, Form} from 'react-bootstrap'
-import { GoogleLogin } from 'react-google-login';
+import {proxy} from "../../../package.json";
 import {useShowLoginPopup} from './redux/hooks';
 import {useUserLogin} from "./redux/userLoginActions";
 import 'react-toastify/dist/ReactToastify.css';
+import './SidePanel.less';
 
 function LoginLogoutElement(props) {
     if (!props.isAuthenticated) {
@@ -17,7 +18,7 @@ function LoginLogoutElement(props) {
 }
 
 export default function SidePanel() {
-    const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
 
     const {isShowLogin, showLoginPopup} = useShowLoginPopup();
     const {isAuthenticated, loginFailure, userLogin, userLogout} = useUserLogin();
@@ -26,25 +27,6 @@ export default function SidePanel() {
         window.location.reload();
     }
 
-    const onGoogleSuccess = (res) => {
-        console.log('Login Success: currentUser:', res.profileObj);
-        alert(
-            `Login Success`
-        );
-       // refreshTokenSetup(res);
-    };
-
-    const onGoogleFailure = (res) => {
-        console.log('Login failed: res:', res);
-        alert(
-            `Failed to login.`
-        );
-    };
-
-    /*const [isShowLogin, isShowPopup] = React.useState(false);
-    const showLoginPopup = () => {
-        isShowPopup(isShowLogin ? false : true)
-    }*/
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
 
@@ -59,7 +41,7 @@ export default function SidePanel() {
                         <Link to="/manager/counter">Counter Demo</Link>
                     </li>
                     <li>
-                        <Link to="/manager/counter">Reddit API Demo</Link>
+                        <Link to="/manager/sign-in-sign-up">Reddit API Demo</Link>
                     </li>
                     <li>
                         <LoginLogoutElement isAuthenticated={isAuthenticated} showLoginPopup={showLoginPopup}
@@ -101,17 +83,6 @@ export default function SidePanel() {
                                 <Form.Control className={"btn login"} type="button" value="Login"
                                               onClick={() => userLogin(username, password)}/>
                             </Form>
-                            {/*<div>
-                                <GoogleLogin
-                                    clientId={clientId}
-                                    buttonText="Login"
-                                    onSuccess={() => onGoogleSuccess}
-                                    onFailure={() => onGoogleFailure}
-                                    cookiePolicy={'single_host_origin'}
-                                    style={{ marginTop: '100px' }}
-                                    isSignedIn={true}
-                                />
-                            </div>*/}
                         </Modal.Body>
                     </div>
                 </div>

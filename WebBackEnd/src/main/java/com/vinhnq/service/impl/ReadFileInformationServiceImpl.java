@@ -219,6 +219,9 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
                 map.put("CFBundleVersion", parametersCFBundleVersion.toString());
                 //Application display name parameters = (NSString)rootDict.objectForKey("CFBundleDisplayName");
                 NSString parametersCFBundleDisplayName = (NSString) rootDict.objectForKey("CFBundleDisplayName");
+                if(null == parametersCFBundleDisplayName){
+                    parametersCFBundleDisplayName = (NSString) rootDict.objectForKey("CFBundleName");
+                }
                 map.put("CFBundleDisplayName", parametersCFBundleDisplayName.toString());
                 //The minimum version of IOS required by the application parameters = (NSString)rootDict.objectForKey("MinimumOSVersion");
                 NSString parametersMinimumOSVersion = (NSString) rootDict.objectForKey("MinimumOSVersion");
