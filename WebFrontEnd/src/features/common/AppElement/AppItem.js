@@ -15,9 +15,12 @@ import {Utils} from "../Utils";
 export const AppItem = (props) => {
 
     //const location = useLocation();
-    const ipaInstall = (plist) => {
+    const ipaInstall = (e, appType,plist) => {
         /*        const event = this.props;
                 event && event.stopPropagation()*/
+        const textInstall = appType == 'ipa' && Utils.isIOS() ? 'Installing...' : 'Downloading...';
+        e.target.textContent = textInstall;
+        e.target.classList.add("disabled");
         window.location.href = plist
         /* window.location.href = 'itms-services://?action=download-manifest&url=https://store.zero9vn.com/manifest/manifest.plist'*/
     }
@@ -33,7 +36,7 @@ export const AppItem = (props) => {
                             value={linkTo} title={linkTo}/>
                 </div>
                 {/*  <a className={"install"} target="_self" href={path}>Download</a>*/}
-                <div className={"install"} onClick={() => ipaInstall(path)}>{textInstall}</div>
+                <div className={"install"} onClick={(e) => ipaInstall(e, appInfo.appType,path)}>{textInstall}</div>
             </>
         }
     }
