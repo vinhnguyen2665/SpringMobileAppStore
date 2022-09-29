@@ -7,18 +7,12 @@
 // https://medium.com/@nate_wang/a-new-approach-for-managing-redux-actions-91c26ce8b5da.
 
 import initialState from './initialState';
-import { reducer as counterPlusOneReducer } from './counterPlusOne';
-import { reducer as counterMinusOneReducer } from './counterMinusOne';
-import { reducer as counterResetReducer } from './counterReset';
 import { reducer as fetchRedditListReducer } from './fetchRedditList';
 import { reducer as showLoginPopupReducer } from './loginPopup';
 import { reducer as userLoginReducer } from './userLoginActions';
 import { reducer as appListReducer } from './apiAppList';
 
 const reducers = [
-  counterPlusOneReducer,
-  counterMinusOneReducer,
-  counterResetReducer,
   fetchRedditListReducer,
   showLoginPopupReducer,
   userLoginReducer,

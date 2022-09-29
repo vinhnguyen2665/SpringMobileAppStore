@@ -35,8 +35,8 @@ public class MvcConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 		registry.addResourceHandler("/app-resource/**").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOMR_APP_RESOURCE);
-		registry.addResourceHandler("/app-resource/apk").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_APK_RESOURCE);
-		registry.addResourceHandler("/app-resource/ipa").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_IPA_RESOURCE);
+		registry.addResourceHandler("/app-resource/apk/**").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_APK_RESOURCE);
+		registry.addResourceHandler("/app-resource/ipa/**").addResourceLocations("file:" + CommonConst.COMMON_FILE.HOME_IPA_RESOURCE);
 
 	}
 

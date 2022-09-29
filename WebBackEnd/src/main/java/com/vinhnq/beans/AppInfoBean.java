@@ -45,6 +45,7 @@ public class AppInfoBean {
     private Double appSize;
     private String appSizeUnit;
     private String deleteFlg;
+    private String updateContent;
     private Timestamp createDate;
     private Long createById;
     private Timestamp updateDate;

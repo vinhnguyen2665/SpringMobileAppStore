@@ -24,6 +24,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -47,12 +48,19 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
 
     private final AppInfoRepository appInfoRepository;
 
+
+    public ReadFileInformationServiceImpl() {
+        this.appInfoRepository = null;
+    }
+
+    @Autowired
     public ReadFileInformationServiceImpl(AppInfoRepository appInfoRepository) {
         this.appInfoRepository = appInfoRepository;
     }
 
+
     @Override
-    public AppInfoBean read(File file, FileSize size, String hostUrl) {
+    public AppInfoBean read(File file, FileSize size, String hostUrl, String updateContent) {
         String extension = FilenameUtils.getExtension(file.getPath());
         AppInfoBean result = null;
         if (AppInfoBean.APK.equals(extension.toLowerCase())) {
@@ -64,6 +72,7 @@ public class ReadFileInformationServiceImpl implements ReadFileInformationServic
         appInfo.setDeleteFlg(CommonConst.DELETE_FLG.NON_DELETE);
         appInfo.setCreateDate(new Timestamp(new Date().getTime()));
         appInfo.setId(0);
+        appInfo.setUpdateContent(updateContent);
         AppInfo app = this.appInfoRepository.saveAndFlush(appInfo);
 
         if (AppInfoBean.IPA.equals(app.getAppType())) {

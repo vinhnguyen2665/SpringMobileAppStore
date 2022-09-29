@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "app_info")
+@Table(name = "app_info", schema = "app_store", catalog = "")
 public class AppInfo {
     private long id;
     private String appType;
@@ -19,6 +19,7 @@ public class AppInfo {
     private Double appSize;
     private String appSizeUnit;
     private String deleteFlg;
+    private String updateContent;
     private Timestamp createDate;
     private long createById;
     private Timestamp updateDate;
@@ -239,5 +240,15 @@ public class AppInfo {
         result = 31 * result + (updateDate != null ? updateDate.hashCode() : 0);
         result = 31 * result + (updateById != null ? updateById.hashCode() : 0);
         return result;
+    }
+
+    @Basic
+    @Column(name = "update_content")
+    public String getUpdateContent() {
+        return updateContent;
+    }
+
+    public void setUpdateContent(String updateContent) {
+        this.updateContent = updateContent;
     }
 }

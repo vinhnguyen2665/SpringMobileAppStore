@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class CommonConst {
 	public static class SYSTEM {
-		public static String NAME = "Sensor System";
+		public static String NAME = "APP STORE";
 		public static String VERSION = "20210627";
 		public static Long ID = 0L;
 	}

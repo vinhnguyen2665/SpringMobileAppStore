@@ -1,19 +1,22 @@
 import React from 'react';
-import {Input, Upload, Button} from 'antd';
-import {useCounterPlusOne, useCounterMinusOne, useCounterReset} from './redux/hooks';
+import {Input, Upload, Button, Progress} from 'antd';
 import axios from 'axios';
 import {useUserLogin} from "./redux/userLoginActions";
 
 
-export default function CounterPage() {
-    const {count, counterPlusOne} = useCounterPlusOne();
-    const {counterMinusOne} = useCounterMinusOne();
-    const {counterReset} = useCounterReset();
+export default function UploadApp() {
+    const { TextArea } = Input;
     const {accessToken} = useUserLogin();
+    const [file, setFile] = React.useState({});
+    const [update_content, setUpdateContent] = React.useState({});
+    const [uploadPercent, setUploadPercent] = React.useState(0);
+    const [uploadStatus, setUploadStatus] = React.useState('active');
     const onRemoveFile = (e) => {
         console.log("onRemoveFile" + JSON.stringify(e))
     }
     const onChangeFile = (e) => {
+        setFile(e.file.originFileObj);
+        setUploadPercent(0);
         switch (e.status) {
             case 'uploading': {
                 break;
@@ -28,15 +31,18 @@ export default function CounterPage() {
     }
     const uploadFile = (e) => {
         let formData = new FormData();
-        let file = e.file;
-        let fileList = e.fileList;
+      //  let file = file;
+       // let fileList = e.fileList;
         //let file = document.querySelector('#file_upload');
         //formData.append("file", file.files[0]);
         formData.append("file", file);
-
+        if(update_content.target){
+            formData.append("update_content", update_content.target.value);
+        }
         const config = {
             onUploadProgress: function (progressEvent) {
                 let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadPercent(percentCompleted);
                 console.log('Percent: ' + percentCompleted + ' loaded: ' + progressEvent.loaded);
             },
             headers: {
@@ -49,9 +55,11 @@ export default function CounterPage() {
 
         axios.post('/api/file/upload-file', formData, config)
             .then(function (res) {
+                setUploadStatus('');
                 console.log(res);
             })
             .catch(function (event, xhr, options) {
+                setUploadStatus('exception');
                 console.log(event);
                 console.log(xhr);
                 console.log(options);
@@ -60,29 +68,22 @@ export default function CounterPage() {
     }
 
     return (
-        <div className="examples-counter-page">
+        <div>
             {/*         <Input id={"file_upload"} type={"file"} accept={".ipa,.apk"}
                    onChange={uploadFile} string={""}/>*/}
-
-            <Upload  accept={".ipa,.apk"} method={"POST"}
-                     action={'/api/file/upload-file'}
+            <h1>Upload APP</h1>
+            <Upload  accept={".ipa,.apk"} /*method={"POST"}
+                     action={'/api/file/upload-file'}*/
                      onRemove={onRemoveFile}
                      onChange={onChangeFile}
                      withCredentials={true}>
                 <Button>Select file</Button>
             </Upload>
-            <h1>Counter</h1>
-            <p>This is simple counter demo to show how Redux sync actions work.</p>
-            <button className="btn-minus-one" onClick={counterMinusOne} disabled={count === 0}>
-                -
-            </button>
-            <span>{count}</span>
-            <button className="btn-plus-one" onClick={counterPlusOne}>
-                +
-            </button>
-            <button className="btn-reset" onClick={counterReset}>
-                Reset
-            </button>
+            <Progress percent={uploadPercent} status={uploadStatus} />
+            <TextArea id="txt_update_content" name={"update_content"} onChange={setUpdateContent} rows={4} />
+
+            <Button onClick={uploadFile}>Submit</Button>
+
         </div>
     );
 }

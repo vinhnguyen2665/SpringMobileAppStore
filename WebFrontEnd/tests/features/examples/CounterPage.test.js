@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { CounterPage } from '../../../src/features/app_screen/CounterPage';
+import { CounterPage } from '../../../src/features/app_screen/UploadApp';
 
-describe('examples/CounterPage', () => {
+describe('examples/UploadApp', () => {
   it('renders node with correct class name', () => {
     const props = {
       examples: {},

@@ -56,11 +56,11 @@ export default function SidePanel() {
                         <Link to="/manager">Welcome</Link>
                     </li>
                     <li>
-                        <Link to="/manager/counter">Counter Demo</Link>
+                        <Link to="/manager/upload">Upload</Link>
                     </li>
-                    <li>
+                    {/*<li>
                         <Link to="/manager/counter">Reddit API Demo</Link>
-                    </li>
+                    </li>*/}
                     <li>
                         <LoginLogoutElement isAuthenticated={isAuthenticated} showLoginPopup={showLoginPopup}
                                             userLogout={logout}/>

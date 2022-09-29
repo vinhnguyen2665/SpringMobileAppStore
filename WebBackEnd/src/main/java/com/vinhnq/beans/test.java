@@ -1,12 +1,15 @@
 package com.vinhnq.beans;
 
 
+import com.vinhnq.service.ReadFileInformationService;
+import com.vinhnq.service.impl.ReadFileInformationServiceImpl;
+
+import java.io.File;
 
 public class test {
     public static void main(String[] args) {
-        Version version = new Version("1.0");
-        Version version2 = new Version("0.1");
-        System.out.println(version.compareTo(version2));
+        ReadFileInformationService readFileInformationService = new ReadFileInformationServiceImpl();
+        readFileInformationService.readFileAPK(new File("C:\\Users\\vinhn\\Downloads\\材料RFIDシステム（仙台製造所） (1).apk"), new FileSize(15D, "MB"));
     }
 
 
