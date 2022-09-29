@@ -1,12 +1,14 @@
 package com.vinhnq.controller.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.vinhnq.beans.ExceptionResponse;
+import com.vinhnq.beans.LoginResponse;
 import com.vinhnq.beans.ResponseAPI;
 import com.vinhnq.beans.UserBeans;
+import com.vinhnq.beans.googleAuthentication.GoogleOauthResponse;
 import com.vinhnq.common.CommonConst;
-import com.vinhnq.config.security.JwtTokenProvider;
-import com.vinhnq.controller.BaseController;
 import com.vinhnq.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -14,20 +16,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-public class LoginControllerAPI extends BaseController {
+@CrossOrigin(origins = {"*"})
+public class LoginControllerAPI {
 
 	private static final Logger logger = LogManager.getLogger(LoginControllerAPI.class);
 
@@ -43,6 +42,40 @@ public class LoginControllerAPI extends BaseController {
 	public LoginControllerAPI(UserService userService, MessageSource messageSource) {
 		this.userService = userService;
 		this.messageSource = messageSource;
+	}
+//
+	@PostMapping(value = "/api/google-oauth", consumes = "application/json;charset=UTF-8")
+	@ResponseBody
+	public ResponseAPI<Object> googleAuthenticate(HttpServletRequest request,@RequestBody GoogleOauthResponse oauthResponse
+	) throws JsonProcessingException {
+		ResponseAPI<Object> result = new ResponseAPI<Object>();
+		Authentication  authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.err.println(oauthResponse.toString());
+		LoginResponse loginResponse = userService.googleOAuth2(oauthResponse);
+		return result;
+		/*ResponseAPI<Object> result = new ResponseAPI<Object>();
+		System.out.println(new Gson().toJson(user));
+		try {
+			result.setStatus(CommonConst.COMMON_RESPONSE.OK);
+			result.setMessage(messageSource.getMessage(CommonConst.COMMON_MESSAGE.LOGIN_SUCCESS, null, null));
+			result.setData(userService.authenticateUserHandler(user.getUsername(), user.getPassword()));
+		} catch (BadCredentialsException e) {
+			result.setStatus(CommonConst.COMMON_RESPONSE.EXCEPTION);
+			result.setMessage(messageSource.getMessage(CommonConst.COMMON_MESSAGE.PASSWORD_INCORRECT, null, null));
+			result.setData(
+					new ExceptionResponse(messageSource.getMessage(CommonConst.COMMON_MESSAGE.PASSWORD_INCORRECT, null, null)));
+		} catch (NullPointerException ex) {
+			result.setStatus(CommonConst.COMMON_RESPONSE.EXCEPTION);
+			result.setMessage(messageSource.getMessage(CommonConst.COMMON_MESSAGE.DATA_NOT_VALID, null, null));
+			result.setData(new ExceptionResponse(messageSource.getMessage(CommonConst.COMMON_MESSAGE.DATA_NOT_VALID, null, null)));
+			logger.error(ex.getMessage(), ex);
+		} catch (Exception ex) {
+			result.setStatus(CommonConst.COMMON_RESPONSE.EXCEPTION);
+			result.setMessage(ex.getMessage());
+			result.setData(new ExceptionResponse(ex.getMessage()));
+			logger.error(ex.getMessage(), ex);
+		}
+		return result;*/
 	}
 
 	@PostMapping(value = "/api/login" , consumes = "application/json;charset=UTF-8")

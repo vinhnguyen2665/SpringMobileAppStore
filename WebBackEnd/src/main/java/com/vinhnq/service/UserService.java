@@ -1,5 +1,6 @@
 package com.vinhnq.service;
 
+import com.vinhnq.beans.googleAuthentication.GoogleOauthResponse;
 import com.vinhnq.entity.User;
 import com.vinhnq.beans.LoginResponse;
 import com.vinhnq.beans.UserBeans;
@@ -63,6 +64,8 @@ public interface UserService {
      * @return
      */
     LoginResponse authenticateUserHandler(String username, String password);
+
+    LoginResponse googleOAuth2(GoogleOauthResponse oauthResponse);
 
     Map<Long, UserBeans> getUsersBeansMap();
 }

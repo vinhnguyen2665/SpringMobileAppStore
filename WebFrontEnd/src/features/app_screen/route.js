@@ -11,5 +11,6 @@ export default {
     { path: 'app/:appType/:packageName/:versionName', component: AppDetail, requiredAuthenticated: true},
     { path: 'upload', component: UploadApp, requiredAuthenticated: true},
     { path: 'reddit', component: RedditListPage,  requiredAuthenticated: true},
+    { path: 'sign-in-sign-up', component: RedditListPage,  requiredAuthenticated: false},
   ],
 };

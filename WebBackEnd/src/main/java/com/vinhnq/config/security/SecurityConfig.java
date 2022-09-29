@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers("/resources/**");
 	}
 
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors().disable();
@@ -63,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/login", "/logout").permitAll();
 		http.authorizeRequests().antMatchers("/api/user/register").permitAll();
 		http.authorizeRequests().antMatchers("/api/login").permitAll();
+		http.authorizeRequests().antMatchers("/api/google-oauth").permitAll();
 		http.authorizeRequests().antMatchers("/common/**").permitAll();
 		http.authorizeRequests().antMatchers("/api/**").permitAll();
 		http.authorizeRequests().antMatchers("/app-resource/**").permitAll();
@@ -100,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-	
+
 	public void setAuthen(UsernamePasswordAuthenticationToken authentication) throws AuthenticationException, Exception {
 		super.authenticationManager().authenticate(authentication);
 	}

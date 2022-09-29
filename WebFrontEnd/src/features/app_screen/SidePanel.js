@@ -1,10 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation, useParams} from 'react-router-dom';
 import {Button, Modal, Form} from 'react-bootstrap'
-import { GoogleLogin } from 'react-google-login';
+import {proxy} from "../../../package.json";
 import {useShowLoginPopup} from './redux/hooks';
 import {useUserLogin} from "./redux/userLoginActions";
 import 'react-toastify/dist/ReactToastify.css';
+import './SidePanel.less';
 
 function LoginLogoutElement(props) {
     if (!props.isAuthenticated) {
@@ -60,6 +61,9 @@ export default function SidePanel() {
                     </li>
                     {/*<li>
                         <Link to="/manager/counter">Reddit API Demo</Link>
+                    </li>*/}
+           {/*         <li>
+                        <Link to="/manager/sign-in-sign-up">Reddit API Demo</Link>
                     </li>*/}
                     <li>
                         <LoginLogoutElement isAuthenticated={isAuthenticated} showLoginPopup={showLoginPopup}

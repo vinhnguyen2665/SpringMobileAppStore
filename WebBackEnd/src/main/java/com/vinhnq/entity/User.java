@@ -65,7 +65,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "first_name", nullable = false, length = 255)
+    @Column(name = "first_name", nullable = true, length = 255)
     public String getFirstName() {
         return firstName;
     }
@@ -75,7 +75,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "mid_name", nullable = false, length = 255)
+    @Column(name = "mid_name", nullable = true, length = 255)
     public String getMidName() {
         return midName;
     }
@@ -85,7 +85,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "last_name", nullable = false, length = 255)
+    @Column(name = "last_name", nullable = true, length = 255)
     public String getLastName() {
         return lastName;
     }
@@ -105,7 +105,7 @@ public class User {
     }
 
     @Basic
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth", nullable = true)
     public Date getDateOfBirth() {
         return dateOfBirth;
     }

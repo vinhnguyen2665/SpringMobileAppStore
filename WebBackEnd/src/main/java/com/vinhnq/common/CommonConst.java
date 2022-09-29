@@ -31,8 +31,11 @@ public class CommonConst {
 	}
 	public static class COMMON_ROLE {
 		public static String ADMIN = "ADMIN";
+		public static String A = "A";
 		public static String USER = "USER";
+		public static String U = "U";
 		public static String MANAGER = "MANAGER";
+		public static String M = "M";
 		public static String ROLE = "ROLE_";
 	}
 
@@ -268,8 +271,8 @@ public class CommonConst {
 	}
 
 	public static class REGEX{
-		public static final Pattern EMAIL =
-				Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]{1,}\\.[a-zA-Z0-9-]{2,}(?:\\.[a-zA-Z0-9-]{2,})*$", Pattern.CASE_INSENSITIVE);
+		public static final Pattern EMAIL = Pattern.compile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]{1,}\\.[a-zA-Z0-9-]{2,}(?:\\.[a-zA-Z0-9-]{2,})*$", Pattern.CASE_INSENSITIVE);
+		public static final Pattern EMAIL_DOMAIN = Pattern.compile("@[a-zA-Z0-9-]{1,}.[a-zA-Z0-9-]{2,}(?:.[a-zA-Z0-9-]{2,})*$", Pattern.CASE_INSENSITIVE);
 	}
 	public static class MAIL{
 		public static String USERNAME = "";
